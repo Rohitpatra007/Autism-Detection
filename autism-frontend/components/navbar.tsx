@@ -38,19 +38,15 @@ export function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex md:items-center md:gap-1">
-            {!isLoggedIn && (
-              <>
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="rounded-md px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </>
-            )}
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="rounded-md px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+              >
+                {link.label}
+              </Link>
+            ))}
             {!isLoggedIn ? (
               <Button asChild className="ml-2 font-bold">
                 <Link href="/auth">Login</Link>
@@ -76,20 +72,16 @@ export function Navbar() {
         {isOpen && (
           <div className="md:hidden border-t border-border py-4">
             <div className="flex flex-col gap-2">
-              {!isLoggedIn && (
-                <>
-                  {navLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => setIsOpen(false)}
-                      className="rounded-md px-3 py-2 text-base font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </>
-              )}
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className="rounded-md px-3 py-2 text-base font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
+                >
+                  {link.label}
+                </Link>
+              ))}
               {!isLoggedIn ? (
                 <Button asChild className="mt-2 font-bold">
                   <Link href="/auth" onClick={() => setIsOpen(false)}>

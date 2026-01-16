@@ -3,22 +3,25 @@
 import type React from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Upload, CheckCircle2 } from "lucide-react"
+import { Upload, CheckCircle2, X } from "lucide-react"
 import { useState } from "react"
 
 export default function DetectAutismPage() {
-  const [file, setFile] = useState<File | null>(null)
-  const [fileName, setFileName] = useState("No file chosen")
+  const [files, setFiles] = useState<File[]>([])
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFile(e.target.files[0])
-      setFileName(e.target.files[0].name)
+      const newFiles = Array.from(e.target.files)
+      setFiles((prevFiles) => [...prevFiles, ...newFiles])
     }
   }
 
+  const handleRemoveFile = (index: number) => {
+    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index))
+  }
+
   const handleAnalyze = () => {
-    if (file) {
+    if (files.length > 0) {
       // Simulate analysis
       setTimeout(() => {
         window.location.href = "/patient/results"
@@ -53,13 +56,48 @@ export default function DetectAutismPage() {
               <p className="text-sm text-muted-foreground mb-6">Supported formats: JPG, PNG, DICOM</p>
 
               <label className="w-full">
-                <input type="file" className="hidden" accept=".jpg,.jpeg,.png,.dcm" onChange={handleFileChange} />
+                <input 
+                  type="file" 
+                  className="hidden" 
+                  accept=".jpg,.jpeg,.png,.dcm" 
+                  onChange={handleFileChange}
+                  multiple
+                />
                 <span className="inline-block px-6 py-2 bg-primary text-primary-foreground rounded-md cursor-pointer hover:opacity-90 transition-opacity font-medium">
-                  Choose File
+                  Choose Files
                 </span>
               </label>
 
-              <p className="text-xs text-muted-foreground mt-6">{fileName}</p>
+              {files.length > 0 && (
+                <div className="mt-6 w-full space-y-2">
+                  <p className="text-xs font-semibold text-foreground mb-3">
+                    {files.length} file{files.length !== 1 ? 's' : ''} selected
+                  </p>
+                  <div className="max-h-40 overflow-y-auto space-y-2">
+                    {files.map((file, index) => (
+                      <div 
+                        key={index} 
+                        className="flex items-center justify-between gap-2 p-2 bg-muted rounded text-left"
+                      >
+                        <span className="text-xs text-foreground truncate flex-1">
+                          {file.name}
+                        </span>
+                        <button
+                          onClick={() => handleRemoveFile(index)}
+                          className="text-muted-foreground hover:text-destructive transition-colors flex-shrink-0"
+                          aria-label="Remove file"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {files.length === 0 && (
+                <p className="text-xs text-muted-foreground mt-6">No files chosen</p>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -127,8 +165,8 @@ export default function DetectAutismPage() {
         </div>
       </div>
 
-      <Button onClick={handleAnalyze} disabled={!file} size="lg" className="w-full bg-primary hover:bg-primary/90">
-        Analyze Scan
+      <Button onClick={handleAnalyze} disabled={files.length === 0} size="lg" className="w-full bg-primary hover:bg-primary/90">
+        Analyze {files.length > 0 ? `${files.length} Scan${files.length !== 1 ? 's' : ''}` : 'Scan'}
       </Button>
     </div>
   )
